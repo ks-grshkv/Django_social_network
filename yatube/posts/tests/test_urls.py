@@ -65,7 +65,7 @@ class StaticURLTests(TestCase):
         StaticURLTests.guest_client = Client()
         StaticURLTests.authorized_client = Client()
         StaticURLTests.authorized_client.force_login(self.user)
-    
+
     def test_auth_users_page(self):
         """Доступность авторизованным пользователям"""
         for address, template in self.urls_http_status_auth.items():
@@ -105,4 +105,3 @@ class StaticURLTests(TestCase):
                 )
                 self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
                 self.assertTemplateUsed(response, 'core/404.html')
-

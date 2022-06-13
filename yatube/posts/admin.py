@@ -24,4 +24,3 @@ class GroupAdmin(admin.ModelAdmin):
         'title',
         'description',
     )
-
