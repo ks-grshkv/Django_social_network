@@ -1,16 +1,12 @@
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from core.utils import paginate
 
 from .forms import CommentForm, PostForm
-from .models import Comment, Group, Post, User, Follow
-
-# from django.views.decorators.cache import cache_page
+from .models import Comment, Follow, Group, Post, User
 
 
-# @cache_page(60 * 15)
 def index(request):
     post_list = Post.objects.all()
     page_obj = paginate(request, post_list, 10)
@@ -137,4 +133,3 @@ def profile_unfollow(request, username):
         if follows.exists():
             follows.delete()
     return redirect('posts:profile', username=username)
-

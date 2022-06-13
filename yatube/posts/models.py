@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from core.models import CreatedModel
+
 User = get_user_model()
 
 
@@ -21,7 +23,7 @@ class Group(models.Model):
         return self.title
 
 
-class Post(models.Model):
+class Post(CreatedModel):
     """
     Post model describes a text post and consists of:
     - text (actual post content),
@@ -67,7 +69,7 @@ class Post(models.Model):
         return self.text[:15]
 
 
-class Comment(models.Model):
+class Comment(CreatedModel):
     """
     Comment model describes a category of comments under a post
     and consists of:
@@ -95,13 +97,9 @@ class Comment(models.Model):
         null=True,
         verbose_name='Автор',
     )
-    created = models.DateTimeField(
-        'Дата и время публикации',
-        auto_now_add=True
-    )
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-pub_date',)
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
@@ -113,9 +111,8 @@ class Follow(models.Model):
     """
     Follow model describes a category of comments under a post
     and consists of:
-    - comment text,
-    - authour of the comment,
-    - post, to which the comment is attributed.
+    - follower user,
+    - author whichh is followed
     """
     author = models.ForeignKey(
         User,

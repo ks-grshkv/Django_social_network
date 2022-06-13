@@ -1,14 +1,14 @@
-
 import shutil
 import tempfile
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post, Comment
-from django.core.files.uploadedfile import SimpleUploadedFile
+from ..models import Comment, Follow, Group, Post
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -33,6 +33,8 @@ class PostsPagesTests(TestCase):
             content_type='image/gif'
         )
         cls.user = User.objects.create_user(username='Auth_user')
+        cls.author = User.objects.create_user(username='New_post author')
+        cls.author2 = User.objects.create_user(username='New_post author2')
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test-slug',
@@ -218,16 +220,30 @@ class PostsPagesTests(TestCase):
                     self.user.username
                 )
 
-    def test_guest_cant_comment(self):
-        """Новый коммент появляется на странице post_detail"""
-        response = (self.authorized_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': self.post.id}))
+    def test_new_post_on_following(self):
+        Post.objects.create(
+            author=self.author,
+            text='Тестовый текст поста',
+            group=self.group,
         )
-        print('aaaaaa', self.comment.text)
+        post_2 = Post.objects.create(
+            author=self.author2,
+            text='Тестовый текст поста',
+            group=self.group,
+        )
+        follow = Follow.create(user=self.user, author=self.author)
+        follow.save()
+        response = self.authorized_client.get(reverse('posts:follow_index'))
+        first_post = response.context['page_obj'][0]
         self.assertEqual(
-            self.comment.text,
-            response.context.get('form').text
+            first_post.text,
+            self.post.text
         )
+        self.assertEqual(
+            first_post.author.username,
+            self.author.username
+        )
+        self.assertNotIn(post_2, response.context['page_obj'])
 
     def new_post_not_on_other_group_list_page(self):
         """Новый пост не появляется в неправильной группе"""
@@ -341,4 +357,3 @@ class TestPostCache(TestCase):
             response.content,
             response_new.content
         )
-        
