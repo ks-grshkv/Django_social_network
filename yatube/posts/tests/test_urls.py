@@ -34,7 +34,7 @@ class StaticURLTests(TestCase):
             'posts/group_list.html': f'/group/{cls.group.slug}/',
             'posts/post_detail.html': f'/posts/{cls.post.id}/',
             'posts/profile.html': f'/profile/{cls.post.author}/',
-            'posts/follow.html': '/following/',
+            'posts/follow.html': '/follow/',
         }
 
         cls.urls_http_status_guest = {
@@ -43,7 +43,7 @@ class StaticURLTests(TestCase):
             f'/posts/{cls.post.id}/': HTTPStatus.OK,
             f'/posts/{cls.post.id}/edit/': HTTPStatus.FOUND,
             '/create/': HTTPStatus.FOUND,
-            '/following/': HTTPStatus.FOUND,
+            '/follow/': HTTPStatus.FOUND,
             f'/posts/{cls.post.id}/comment/': HTTPStatus.FOUND,
             f'/profile/{cls.author}/follow/': HTTPStatus.FOUND,
             f'/profile/{cls.author}/unfollow/': HTTPStatus.FOUND,
@@ -55,7 +55,7 @@ class StaticURLTests(TestCase):
             f'/posts/{cls.post.id}/': HTTPStatus.OK,
             f'/posts/{cls.post.id}/edit/': HTTPStatus.OK,
             '/create/': HTTPStatus.OK,
-            '/following/': HTTPStatus.OK,
+            '/follow/': HTTPStatus.OK,
             f'/posts/{cls.post.id}/comment/': HTTPStatus.FOUND,
             f'/profile/{cls.author}/follow/': HTTPStatus.FOUND,
             f'/profile/{cls.author}/unfollow/': HTTPStatus.FOUND,
