@@ -1,4 +1,3 @@
-
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
@@ -92,7 +91,8 @@ class StaticURLTests(TestCase):
                 self.assertEqual(response.status_code, template)
 
     def test_404_page(self):
-        """404"""
+        """Проверяем, что для несуществующих страниц выдаем ошибку 404
+        с кастомным шаблоном."""
         clients = (
             self.authorized_client,
             self.guest_client,

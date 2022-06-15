@@ -220,7 +220,51 @@ class PostsPagesTests(TestCase):
                     self.user.username
                 )
 
+    def test_new_follow(self):
+        """Авторизованный юзер может подписаться"""
+        follows_count = Follow.objects.count()
+        follow = Follow.objects.create(user=self.user, author=self.author)
+        follow.save()
+        response = self.authorized_client.get(
+            reverse(
+                'posts:profile_follow',
+                kwargs={'username': self.author.username}
+            )
+        )
+        self.assertEqual(Follow.objects.count(), follows_count + 1)
+        self.assertRedirects(
+            response,
+            reverse(
+                'posts:profile',
+                kwargs={'username': self.author.username}
+            )
+        )
+
+    def test_unfollow(self):
+        """Авторизованный юзер может отдписаться"""
+        follows_count = Follow.objects.count()
+        follow = Follow.objects.create(user=self.user, author=self.author)
+        follow.save()
+        follow.delete()
+        response = self.authorized_client.get(
+            reverse(
+                'posts:profile_unfollow',
+                kwargs={'username': self.author.username}
+            )
+        )
+        self.assertEqual(Follow.objects.count(), follows_count)
+        self.assertRedirects(
+            response,
+            reverse(
+                'posts:profile',
+                kwargs={'username': self.author.username}
+            )
+        )
+
     def test_new_post_on_following(self):
+        """Новый пост появляется в подписках;
+        в избранном не появляются посты от авторов, на которых
+        мы не подписаны"""
         Post.objects.create(
             author=self.author,
             text='Тестовый текст поста',
@@ -231,7 +275,7 @@ class PostsPagesTests(TestCase):
             text='Тестовый текст поста',
             group=self.group,
         )
-        follow = Follow.create(user=self.user, author=self.author)
+        follow = Follow.objects.create(user=self.user, author=self.author)
         follow.save()
         response = self.authorized_client.get(reverse('posts:follow_index'))
         first_post = response.context['page_obj'][0]

@@ -36,10 +36,6 @@ class Post(CreatedModel):
         'Текст поста',
         help_text='Введите текст поста'
     )
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -130,8 +126,3 @@ class Follow(models.Model):
         null=True,
         verbose_name='Пользователь',
     )
-
-    @classmethod
-    def create(cls, user, author):
-        new_follow = cls(user=user, author=author)
-        return new_follow

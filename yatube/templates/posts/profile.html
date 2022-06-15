@@ -5,22 +5,24 @@
 {% endblock %}  
 {% block content %}
 <div class="mb-5">
-   <h1>Все посты пользователя {{ post.author.first_name }} {{ post.author.last_name }} </h1>
+   <h1>Все посты пользователя {{ author.first_name }} {{ author.last_name }} </h1>
    <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
-   {% if following %}
-    <a
-      class="btn btn-lg btn-light"
-      href="{% url 'posts:profile_unfollow' author.username %}" role="button"
-    >
-      Отписаться
-    </a>
-  {% else %}
+   {% if not author.username == user.username %}
+      {% if following %}
       <a
-        class="btn btn-lg btn-primary"
-        href="{% url 'posts:profile_follow' author.username %}" role="button"
+         class="btn btn-lg btn-light"
+         href="{% url 'posts:profile_unfollow' author.username %}" role="button"
       >
-        Подписаться
+         Отписаться
       </a>
+   {% else %}
+         <a
+         class="btn btn-lg btn-primary"
+         href="{% url 'posts:profile_follow' author.username %}" role="button"
+         >
+         Подписаться
+         </a>
+      {% endif %}
    {% endif %}
 </div> 
 
